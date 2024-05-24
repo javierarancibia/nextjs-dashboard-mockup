@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const router = useRouter()
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -33,6 +35,25 @@ const DropdownUser = () => {
     document.addEventListener("keydown", keyHandler);
     return () => document.removeEventListener("keydown", keyHandler);
   });
+
+  // Logout to API function
+
+  const logout = async () => {
+    try {
+      const response = await fetch(`/api/auth?action=logout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Logging Out"})
+      })
+
+      if (!response.ok) {
+          throw new Error(`response status: ${response.status}`);
+      }
+      return router.push("/auth/login")
+    } catch (error) {
+    console.error('Login failed:', error);
+    }
+  }
 
   return (
     <div className="relative">
@@ -161,7 +182,10 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button 
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+          onClick={() => logout()}  
+        >
           <svg
             className="fill-current"
             width="22"
