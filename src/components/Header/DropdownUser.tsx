@@ -6,6 +6,7 @@ import { signOut, useSession } from "next-auth/react";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [ userImage, setUserImage ] = useState('/images/user/user-01.png')
   const { data: session, status } = useSession()
   
   const trigger = useRef<any>(null);
@@ -33,6 +34,12 @@ const DropdownUser = () => {
     return () => document.removeEventListener("keydown", keyHandler);
   });
 
+  useEffect(() => {
+    if (session && session.user?.image) {
+      setUserImage(`${session.user.image}?sz=200`)
+    }
+  }, [ session ])
+
 
   return (
     <div className="relative">
@@ -46,19 +53,16 @@ const DropdownUser = () => {
           <span className="block text-sm font-medium text-black dark:text-white">
            { session?.user?.name }
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{ session?.user?.email }</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
           <Image
             width={112}
             height={112}
-            src={"/images/user/user-01.png"}
-            style={{
-              width: "auto",
-              height: "auto",
-            }}
-            alt="User"
+            src={userImage}
+            style={{ width: "auto", height: "auto", borderRadius:"50%" }}
+            alt="Usuario"
           />
         </span>
 
